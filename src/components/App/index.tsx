@@ -1,13 +1,10 @@
 import { useState } from "react";
 import {
   Container,
-  Typography,
   Box,
   Paper,
-  IconButton,
   TextField,
 } from "@mui/material";
-import CasinoIcon from "@mui/icons-material/Casino";
 import AttributeField from "components/AttributeField";
 import Dice from "components/Dice";
 import NumberStepper from "components/NumberStepper";
@@ -85,17 +82,10 @@ function App() {
         justifyContent="center"
         gap={2}
         mb={2}
+        onClick={roll2d6}
       >
         <Dice value={dice[0]} />
         <Dice value={dice[1]} />
-
-        <Typography variant="h4">
-          = {dice[0] + dice[1]}
-        </Typography>
-
-        <IconButton onClick={roll2d6} disabled={rolling}>
-          <CasinoIcon fontSize="large" />
-        </IconButton>
       </Box>
 
       <Paper sx={{ p: 2, display: "flex", flexDirection: "column", gap: 3 }}>
@@ -143,7 +133,6 @@ function App() {
             onChange={(v) =>
               setCharacter({ ...character, gold: v })
             }
-            width={110}
           />
 
           <NumberStepper
@@ -153,7 +142,6 @@ function App() {
             onChange={(v) =>
               setCharacter({ ...character, rations: v })
             }
-            width={110}
           />
         </Box>
 

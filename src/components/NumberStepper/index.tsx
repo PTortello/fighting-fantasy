@@ -26,6 +26,27 @@ function NumberStepper({
 
   return (
     <Box display="flex" alignItems="center" gap={1.5}>
+      <TextField
+        label={label}
+        type="number"
+        value={value}
+        onChange={(e) => {
+          const v = Number(e.target.value);
+          onChange(Math.max(min, Math.min(v, max)));
+        }}
+        sx={{
+          width,
+          "& .MuiInputBase-root": {
+            height: 42,
+          },
+        }}
+        slotProps={{
+          htmlInput: {
+            style: { textAlign: "center", padding: "8px" },
+          },
+        }}
+      />
+
       <Box display="flex" flexDirection="column" gap={0.5}>
         <IconButton
           size="small"
@@ -45,27 +66,6 @@ function NumberStepper({
           <RemoveIcon fontSize="small" />
         </IconButton>
       </Box>
-
-      <TextField
-        label={label}
-        type="number"
-        value={value}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          onChange(Math.max(min, Math.min(v, max)));
-        }}
-        sx={{
-          width,
-          "& .MuiInputBase-root": {
-            height: 40,
-          },
-        }}
-        slotProps={{
-          htmlInput: {
-            style: { textAlign: "center", padding: "8px" },
-          },
-        }}
-      />
     </Box>
   );
 }
