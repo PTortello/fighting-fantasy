@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { Container, TextField, Typography, Box, Paper, IconButton } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import CasinoIcon from "@mui/icons-material/Casino";
 import AttributeField from "components/AttributeField";
 import Dice from "components/Dice";
+import NumberStepper from "components/NumberStepper";
 import type { IAttribute, ICharacter } from "interfaces/character";
 
 function App() {
@@ -15,18 +23,22 @@ function App() {
     luck: { current: 0, max: 0 },
     gold: 0,
     rations: 10,
-    equipment: "",
+    equipment: "espada, armadura de couro e lampião",
   });
 
   const roll2d6 = () => {
     if (rolling) return;
     setRolling(true);
+
     let rolls = 0;
+
     const interval = setInterval(() => {
       const r1 = Math.floor(Math.random() * 6) + 1;
       const r2 = Math.floor(Math.random() * 6) + 1;
+
       setDice([r1, r2]);
       rolls++;
+
       if (rolls > 10) {
         clearInterval(interval);
         setRolling(false);
@@ -41,21 +53,27 @@ function App() {
   ) => {
     setCharacter((prev) => {
       const attr = prev[key] as IAttribute;
+
       let newValue = value;
+
       if (field === "current") {
         newValue = Math.max(0, Math.min(value, attr.max));
       }
+
       if (field === "max") {
         newValue = Math.max(0, value);
       }
+
       const updatedAttr = {
         ...attr,
         [field]: newValue,
       };
+
       if (field === "max" && updatedAttr.current > newValue) {
         updatedAttr.current = newValue;
       }
-      return {...prev, [key]: updatedAttr};
+
+      return { ...prev, [key]: updatedAttr };
     });
   };
 
@@ -117,31 +135,27 @@ function App() {
           }
         />
 
-        <TextField
-          label="Ouro"
-          type="number"
-          value={character.gold}
-          onChange={(e) =>
-            setCharacter({
-              ...character,
-              gold: Math.max(0, Number(e.target.value)),
-            })
-          }
-          fullWidth
-        />
+        <Box display="flex" justifyContent="space-between">
+          <NumberStepper
+            label="Ouro"
+            value={character.gold}
+            min={0}
+            onChange={(v) =>
+              setCharacter({ ...character, gold: v })
+            }
+            width={110}
+          />
 
-        <TextField
-          label="Provisões"
-          type="number"
-          value={character.rations}
-          onChange={(e) =>
-            setCharacter({
-              ...character,
-              rations: Math.max(0, Number(e.target.value)),
-            })
-          }
-          fullWidth
-        />
+          <NumberStepper
+            label="Provisões"
+            value={character.rations}
+            min={0}
+            onChange={(v) =>
+              setCharacter({ ...character, rations: v })
+            }
+            width={110}
+          />
+        </Box>
 
         <TextField
           label="Equipamentos"
