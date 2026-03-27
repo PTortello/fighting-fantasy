@@ -56,18 +56,17 @@ function AttributeField({
 
       <Box display="flex" justifyContent="space-between" gap={1}>
         <NumberStepper
+          label="Máximo"
+          value={max}
+          min={0}
+          onChange={(v) => onChangeMax?.(v)}
+        />
+        <NumberStepper
           label="Atual"
           value={current}
           min={0}
           max={max}
           onChange={onChangeCurrent}
-        />
-
-        <NumberStepper
-          label="Máximo"
-          value={max}
-          min={0}
-          onChange={(v) => onChangeMax?.(v)}
         />
       </Box>
     </Box>
