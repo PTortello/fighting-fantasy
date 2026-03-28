@@ -5,7 +5,6 @@ import {
   Paper,
   TextField,
   Dialog,
-  DialogTitle,
   DialogContent,
   IconButton as MuiIconButton,
 } from "@mui/material";
@@ -211,18 +210,43 @@ function App() {
           fullWidth
         />
       </Paper>
-      <Dialog open={openMonsters} onClose={() => setOpenMonsters(false)} fullWidth>
-        <DialogTitle
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+      <Dialog
+        open={openMonsters}
+        onClose={() => setOpenMonsters(false)}
+        fullScreen
+        sx={{
+          "& .MuiDialog-container": {
+            alignItems: "flex-end",
+          },
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              p: 1,
+              maxHeight: "70vh",
+            },
+          },
+        }}
+      >
+        <Box display="flex" justifyContent="space-between" alignItems="center" px={1}>
           Monstros
           <MuiIconButton onClick={() => setOpenMonsters(false)}>
             <CloseIcon />
           </MuiIconButton>
-        </DialogTitle>
+        </Box>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 1, p: 1, pt: 0 }}>
+          <Box
+            sx={{
+              width: 40,
+              height: 4,
+              backgroundColor: "rgba(255,255,255,0.3)",
+              borderRadius: 2,
+              alignSelf: "center",
+              mb: 1,
+            }}
+          />
           {monsters.map((monster, index) => (
             <Box
               key={index}
@@ -231,7 +255,7 @@ function App() {
               justifyContent="space-between"
               gap={1}
             >
-              <Box display="flex" gap={1}>
+              <Box display="flex" justifyContent="space-around" flex={1} gap={1}>
                 <NumberStepper
                   label="Habilidade"
                   value={monster.skill}
@@ -239,7 +263,7 @@ function App() {
                   onChange={(v) =>
                     updateMonster(index, "skill", v)
                   }
-                  width={80}
+                  width={100}
                 />
 
                 <NumberStepper
@@ -249,7 +273,7 @@ function App() {
                   onChange={(v) =>
                     updateMonster(index, "energy", v)
                   }
-                  width={80}
+                  width={100}
                 />
               </Box>
               <MuiIconButton
