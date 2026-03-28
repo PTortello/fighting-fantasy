@@ -1,27 +1,73 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Box,
   Paper,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton as MuiIconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import CastleIcon from "@mui/icons-material/Castle";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AttributeField from "components/AttributeField";
 import Dice from "components/Dice";
 import NumberStepper from "components/NumberStepper";
 import type { IAttribute, ICharacter } from "interfaces/character";
+import { DEFAULT_CHARACTER } from "constants/character";
+import type { IMonster } from "interfaces/monster";
+
+const STORAGE_KEYS = {
+  character: "ff-character",
+  monsters: "ff-monsters",
+};
 
 function App() {
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [rolling, setRolling] = useState(false);
-
-  const [character, setCharacter] = useState<ICharacter>({
-    skill: { current: 0, max: 0 },
-    energy: { current: 0, max: 0 },
-    luck: { current: 0, max: 0 },
-    gold: 0,
-    rations: 10,
-    equipment: "espada, armadura de couro, lampião",
+  const [openMonsters, setOpenMonsters] = useState(false);
+  const [character, setCharacter] = useState<ICharacter>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.character);
+    return saved
+      ? { ...DEFAULT_CHARACTER, ...JSON.parse(saved) }
+      : DEFAULT_CHARACTER;
   });
+
+  const [monsters, setMonsters] = useState<IMonster[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.monsters);
+    return saved ? JSON.parse(saved) : [{ skill: 0, energy: 0 }];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.character, JSON.stringify(character));
+  }, [character]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.monsters, JSON.stringify(monsters));
+  }, [monsters]);
+
+  const addMonster = () => {
+    setMonsters((prev) => [...prev, { skill: 0, energy: 0 }]);
+  };
+
+  const removeMonster = (index: number) => {
+    setMonsters((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateMonster = (
+    index: number,
+    field: "skill" | "energy",
+    value: number
+  ) => {
+    setMonsters((prev) =>
+      prev.map((m, i) =>
+        i === index ? { ...m, [field]: value } : m
+      )
+    );
+  };
 
   const roll2d6 = () => {
     if (rolling) return;
@@ -87,6 +133,12 @@ function App() {
         <Dice value={dice[0]} />
         <Dice value={dice[1]} />
       </Box>
+      <MuiIconButton
+        onClick={() => setOpenMonsters(true)}
+        sx={{ position: "absolute", right: 8, top: 8 }}
+      >
+        <CastleIcon />
+      </MuiIconButton>
 
       <Paper sx={{ p: 2, display: "flex", flexDirection: "column", gap: 3 }}>
         <AttributeField
@@ -159,6 +211,63 @@ function App() {
           fullWidth
         />
       </Paper>
+      <Dialog open={openMonsters} onClose={() => setOpenMonsters(false)} fullWidth>
+        <DialogTitle
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          Monstros
+          <MuiIconButton onClick={() => setOpenMonsters(false)}>
+            <CloseIcon />
+          </MuiIconButton>
+        </DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+        >
+          {monsters.map((monster, index) => (
+            <Box
+              key={index}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Box display="flex" gap={1}>
+                <NumberStepper
+                  label="Habilidade"
+                  value={monster.skill}
+                  min={0}
+                  onChange={(v) =>
+                    updateMonster(index, "skill", v)
+                  }
+                  width={100}
+                />
+
+                <NumberStepper
+                  label="Energia"
+                  value={monster.energy}
+                  min={0}
+                  onChange={(v) =>
+                    updateMonster(index, "energy", v)
+                  }
+                  width={100}
+                />
+              </Box>
+              <MuiIconButton
+                onClick={() => removeMonster(index)}
+                disabled={monsters.length === 1}
+              >
+                <DeleteIcon />
+              </MuiIconButton>
+            </Box>
+          ))}
+          <Box display="flex" justifyContent="center">
+            <MuiIconButton onClick={addMonster}>
+              <AddIcon />
+            </MuiIconButton>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 }
