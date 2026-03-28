@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import {
-  Container,
   Box,
+  Button,
+  Container,
   Paper,
   TextField,
   Dialog,
+  DialogActions,
   DialogContent,
+  DialogTitle,
   IconButton as MuiIconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import CastleIcon from "@mui/icons-material/Castle";
 import AddIcon from "@mui/icons-material/Add";
+import CastleIcon from "@mui/icons-material/Castle";
+import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import AttributeField from "components/AttributeField";
 import Dice from "components/Dice";
 import NumberStepper from "components/NumberStepper";
-import type { IAttribute, ICharacter } from "interfaces/character";
 import { DEFAULT_CHARACTER } from "constants/character";
+import type { IAttribute, ICharacter } from "interfaces/character";
 import type { IMonster } from "interfaces/monster";
 
 const STORAGE_KEYS = {
@@ -27,6 +31,7 @@ const STORAGE_KEYS = {
 function App() {
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [rolling, setRolling] = useState(false);
+  const [openReset, setOpenReset] = useState(false);
   const [openMonsters, setOpenMonsters] = useState(false);
   const [character, setCharacter] = useState<ICharacter>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.character);
@@ -47,6 +52,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.monsters, JSON.stringify(monsters));
   }, [monsters]);
+
+  const handleReset = () => {
+    setCharacter(DEFAULT_CHARACTER);
+    setMonsters([{ skill: 0, energy: 0 }]);
+    setOpenReset(false);
+  };
 
   const addMonster = () => {
     setMonsters((prev) => [...prev, { skill: 0, energy: 0 }]);
@@ -137,6 +148,12 @@ function App() {
         sx={{ position: "absolute", right: 8, top: 8 }}
       >
         <CastleIcon />
+      </MuiIconButton>
+      <MuiIconButton
+        onClick={() => setOpenReset(true)}
+        sx={{ position: "absolute", left: 8, top: 8 }}
+      >
+        <RefreshIcon />
       </MuiIconButton>
 
       <Paper sx={{ p: 2, display: "flex", flexDirection: "column", gap: 3 }}>
@@ -290,6 +307,20 @@ function App() {
             </MuiIconButton>
           </Box>
         </DialogContent>
+      </Dialog>
+      <Dialog open={openReset} onClose={() => setOpenReset(false)}>
+        <DialogTitle>Recomeçar aventura?</DialogTitle>
+        <Box px={3} pb={1}>
+          Seu personagem e todos os monstros serão apagados.
+        </Box>
+        <DialogActions>
+          <Button onClick={() => setOpenReset(false)}>
+            Cancelar
+          </Button>
+          <Button color="error" onClick={() => handleReset()}>
+            Recomeçar
+          </Button>
+        </DialogActions>
       </Dialog>
     </Container>
   );
