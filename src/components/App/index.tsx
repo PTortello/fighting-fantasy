@@ -222,15 +222,14 @@ function App() {
             <CloseIcon />
           </MuiIconButton>
         </DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
-        >
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 1, p: 1, pt: 0 }}>
           {monsters.map((monster, index) => (
             <Box
               key={index}
               display="flex"
               alignItems="center"
               justifyContent="space-between"
+              gap={1}
             >
               <Box display="flex" gap={1}>
                 <NumberStepper
@@ -240,7 +239,7 @@ function App() {
                   onChange={(v) =>
                     updateMonster(index, "skill", v)
                   }
-                  width={100}
+                  width={80}
                 />
 
                 <NumberStepper
@@ -250,7 +249,7 @@ function App() {
                   onChange={(v) =>
                     updateMonster(index, "energy", v)
                   }
-                  width={100}
+                  width={80}
                 />
               </Box>
               <MuiIconButton
